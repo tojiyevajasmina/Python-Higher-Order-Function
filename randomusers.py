@@ -580,7 +580,11 @@ def get_full_names(data: dict) -> list[str]:
     Returns:
         list[str]: List of full names.
     """
-    pass
+    
+    r = map(lambda p: f"{p['name']['first']} {p['name']['last']}", data['results'])
+
+    return list(r)
+
 
 
 def get_users_by_country(data: dict, country: str) -> list[dict]:
@@ -594,7 +598,7 @@ def get_users_by_country(data: dict, country: str) -> list[dict]:
     Returns:
         list[dict]: List of dictionaries containing full name and email of matching users.
     """
-    pass
+    
 
 
 def count_users_by_gender(data: dict) -> dict:
@@ -607,7 +611,10 @@ def count_users_by_gender(data: dict) -> dict:
     Returns:
         dict: Dictionary with gender as keys and count as values.
     """
-    pass
+    return {
+        'males':len(list(filter(lambda user:user['gender'] == 'male', data ['result']))),
+        'females':len(list(filter(lambda user:user['gender'] == 'female', data['results'])))
+    }
 
 
 def get_emails_of_older_than(data: dict, age: int) -> list[str]:
@@ -621,8 +628,15 @@ def get_emails_of_older_than(data: dict, age: int) -> list[str]:
     Returns:
         list[str]: List of email addresses.
     """
-    pass
+    return list(map(
+        lambda user:user['email'],
+        filter(
+            lambda user:user['dob'] ['age'] > age,
+            data ['results']
+        )
+    ))
 
+print(get_emails_of_older_than(randomuser_data,70))
 
 def sort_users_by_age(data: dict, descending: bool = False) -> list[dict]:
     """
@@ -649,7 +663,12 @@ def get_usernames_starting_with(data: dict, letter: str) -> list[str]:
     Returns:
         list[str]: List of matching usernames.
     """
-    pass
+    return list(filter(
+        lambda user:user['login'] ['username'].startswith(letter),
+        data['results']
+    ))
+
+print(get_usernames_starting_with(randomuser_data,'g'))
 
 
 def get_average_age(data: dict) -> float:
@@ -662,7 +681,9 @@ def get_average_age(data: dict) -> float:
     Returns:
         float: Average age.
     """
-    pass
+    return sum(map(lambda user: user['dob']['age'],data['results'])) / len(data('results'))
+
+print(get_average_age(randomuser_data))
 
 
 def group_users_by_nationality(data: dict) -> dict:
@@ -675,7 +696,13 @@ def group_users_by_nationality(data: dict) -> dict:
     Returns:
         dict: Dictionary with nationality as keys and count as values.
     """
-    pass
+    group = {}
+    for user in data['results']:
+        group.setdefault(user['nat'],[]).append(user['name']['first'])
+
+    return group
+
+print(group_users_by_nationality(randomuser_data))
 
 
 def get_all_coordinates(data: dict) -> list[tuple[str, str]]:
